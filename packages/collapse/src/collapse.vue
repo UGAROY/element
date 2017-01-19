@@ -33,18 +33,26 @@
 
     methods: {
       setActiveNames(activeNames) {
-        activeNames = [].concat(activeNames);
-        let value = this.accordion ? activeNames[0] : activeNames;
-        this.activeNames = activeNames;
-        this.$emit('input', value);
-        this.$emit('change', value);
+        const func = () => {
+          activeNames = [].concat(activeNames);
+          let value = this.accordion ? activeNames[0] : activeNames;
+          this.activeNames = activeNames;
+          this.$emit('input', value);
+          this.$emit('change', value);
+        };
+        // HACK: add a before collapsed changed methods, which should returns
+        // a promise
+        if (this.$parent.beforeCollapseChanged) {
+          this.$parent.beforeCollapseChanged().then(() => func());
+        } else {
+          func();
+        }
       },
       handleItemClick(item) {
         if (this.accordion) {
           this.setActiveNames(
             this.activeNames[0] &&
-            this.activeNames[0] === item.name
-            ? '' : item.name
+            this.activeNames[0] === item.name ? '' : item.name
           );
         } else {
           let activeNames = this.activeNames.slice(0);
