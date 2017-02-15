@@ -11,6 +11,7 @@
 
     props: {
       accordion: Boolean,
+      beforeCollapseChanged: Function,
       value: {
         type: [Array, String, Number],
         default() {
@@ -42,8 +43,8 @@
         let value = this.accordion ? activeNames[0] : activeNames;
         // HACK: add a before collapsed changed methods
         // which should returns a promise
-        if (this.$parent.beforeCollapseChanged) {
-          this.$parent.beforeCollapseChanged(value).then(() => setValue(value));
+        if (this.beforeCollapseChanged) {
+          this.beforeCollapseChanged(value).then(() => setValue(value));
         } else {
           setValue();
         }
